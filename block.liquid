@@ -1,1 +1,21 @@
-
+{% comment %} Theme App Block: Volume Discount {% endcomment %}
+<div id="volume-discount-{{ block.id }}" data-product-id="{{ product.id }}"></div>
+<script>
+  (function(){
+    const el = document.getElementById('volume-discount-{{ block.id }}');
+    const productGid = 'gid://shopify/Product/' + el.dataset.productId;
+    fetch('/apps/volume-discount/config')
+      .then(r => r.json())
+      .then(cfg => {
+        if (!cfg || !cfg.products) return;
+        if (cfg.products.includes(productGid)) {
+          const text = `Buy ${cfg.minQty || 2}, get ${cfg.percentOff}% off`;
+          el.innerHTML = `<div class="volume-discount">${text}</div>`;
+        }
+      })
+      .catch(e => { /* silent fail */ });
+  })();
+</script>
+<style>
+  .volume-discount { font-weight:600; margin-top:8px; }
+</style>
